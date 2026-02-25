@@ -1,4 +1,4 @@
-package entity;
+package com.example.identityservice.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
