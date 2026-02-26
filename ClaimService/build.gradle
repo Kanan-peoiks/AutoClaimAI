@@ -15,12 +15,10 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' } // Spring AI üçün lazımdır
 }
 
 ext {
     set('springCloudVersion', "2025.0.1")
-    set('springAiVersion', "1.0.0-M5")
 }
 
 dependencies {
@@ -28,10 +26,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // Google Gemini AI Starter
-    implementation 'org.springframework.ai:spring-ai-google-openai-spring-boot-starter'
-
-    // Mikroservis arası əlaqə (lazım olsa Identity ilə danışmaq üçün)
+    // Mikroservis arası əlaqə üçün (gələcəkdə Pricing üçün lazım olacaq)
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     compileOnly 'org.projectlombok:lombok'
@@ -43,6 +38,5 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
     }
 }
