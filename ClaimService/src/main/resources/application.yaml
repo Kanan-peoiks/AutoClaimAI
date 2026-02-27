@@ -15,4 +15,4 @@ spring:
 
 gemini:
   api:
-    key: MY_GEMİNİ_APİ_KEY
+    key: MY_GEMINI_API_KEY
