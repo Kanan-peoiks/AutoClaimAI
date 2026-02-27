@@ -1,0 +1,129 @@
+/* AutoClaim — custom styles (Bootstrap base) */
+
+:root {
+    --ac-primary: #0d6efd;
+    --ac-bg: #f8f9fa;
+    --ac-card-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.08);
+    --ac-radius: 0.5rem;
+}
+
+body {
+    background-color: var(--ac-bg);
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.navbar-brand {
+    letter-spacing: 0.02em;
+}
+
+.card {
+    border: none;
+    border-radius: var(--ac-radius);
+    box-shadow: var(--ac-card-shadow);
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+/* View containers */
+.view {
+    animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Image preview */
+#preview-img {
+    max-width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    display: block;
+}
+
+/* Upload result block */
+#upload-result .result-assessment {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+#upload-result .result-cost {
+    font-weight: 600;
+    color: var(--ac-primary);
+}
+
+/* History cards */
+.history-card {
+    background: #fff;
+    border-radius: var(--ac-radius);
+    box-shadow: var(--ac-card-shadow);
+    overflow: hidden;
+}
+
+.history-card .thumb {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+}
+
+.history-card .thumb-placeholder {
+    width: 80px;
+    height: 60px;
+    background: #e9ecef;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+/* Overlay spinner */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.overlay .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Responsive: mobile stack */
+@media (max-width: 991.98px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    #view-profile .row > .col-lg-6 {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Form validation feedback */
+.form-control:invalid:not(:placeholder-shown) {
+    border-color: #dc3545;
+}
+
+.form-control.is-valid:not(:placeholder-shown) {
+    border-color: #198754;
+}
+
+/* Message areas */
+#login-message,
+#register-message,
+#upload-message {
+    min-height: 1.25rem;
+}
