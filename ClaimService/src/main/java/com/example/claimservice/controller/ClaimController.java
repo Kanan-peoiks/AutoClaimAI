@@ -28,7 +28,7 @@ public class ClaimController {
         Claim claim = new Claim();
         claim.setUsername(username);
         claim.setAiAssessment(aiResult);
-        claim.setImageUrl("uploads/" + file.getOriginalFilename()); // Sadəlik üçün adını yazırıq
+        claim.setImageUrl("uploads/" + file.getOriginalFilename());
 
         // 3. Bazaya yadda saxlayırıq
         Claim savedClaim = claimRepository.save(claim);
