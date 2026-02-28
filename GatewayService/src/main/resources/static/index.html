@@ -3,16 +3,373 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoClaim — Sığorta Tələbi</title>
-    <link rel="stylesheet" href="style.css">
+    <title>AutoClaimAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <style>
+        :root {
+            --fc-obsidian: #0c0c0f;
+            --fc-slate: #1a1a24;
+            --fc-midnight: #0f1419;
+            --fc-midnight-blue: #0f172a;
+            --fc-bg-body: linear-gradient(160deg, var(--fc-obsidian) 0%, var(--fc-slate) 35%, var(--fc-midnight) 60%, var(--fc-midnight-blue) 100%);
+            --fc-glass-bg: rgba(15, 15, 20, 0.65);
+            --fc-glass-border: rgb(255, 255, 255);
+            --fc-glass-border-glow: rgba(255, 255, 255, 0.12);
+            --fc-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --fc-pink: #e91e63;
+            --fc-pink-glow: rgba(233, 30, 99, 0.5);
+            --fc-yellow: #facc15;
+            --fc-yellow-glow: rgba(250, 204, 21, 0.35);
+            --fc-green: #e91e63;
+            --fc-green-glow: rgba(233, 30, 99, 0.15);
+            --fc-text-primary: #f1f5f9;
+            --fc-text-secondary: #ffffff;
+            --fc-text-muted: #ffffff;
+            --fc-report-bg: rgba(10, 10, 14, 0.85);
+            --fc-report-border: var(--fc-pink);
+            --fc-drop-bg: rgba(0, 0, 0, 0.25);
+            --fc-drop-border: rgba(250, 204, 21, 0.3);
+            --fc-drop-hover: rgba(233, 30, 99, 0.15);
+            --fc-radius: 10px;
+            --fc-radius-sm: 6px;
+            --fc-space: 1rem;
+            --fc-space-lg: 1.5rem;
+            --fc-transition: 0.28s ease;
+            --fc-font: 'Inter', 'Montserrat', system-ui, sans-serif;
+            --fc-tracking: -0.02em;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: var(--fc-font);
+            font-size: 1rem;
+            line-height: 1.6;
+            letter-spacing: var(--fc-tracking);
+            color: var(--fc-text-primary);
+            background: var(--fc-bg-body);
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 100% 80% at 50% 50%, transparent 40%, rgba(0,0,0,0.4) 100%),
+            repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        main { position: relative; z-index: 1; }
+
+        /* Navbar */
+        .navbar {
+            background: var(--fc-glass-bg) !important;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--fc-glass-border);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: var(--fc-text-primary) !important;
+        }
+
+        .navbar-dark .navbar-nav .nav-link {
+            color: var(--fc-text-secondary) !important;
+            transition: color var(--fc-transition);
+        }
+
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: var(--fc-pink) !important;
+            text-shadow: 0 0 12px var(--fc-pink-glow);
+        }
+
+        .navbar-toggler { border-color: var(--fc-glass-border-glow); }
+        .navbar-toggler-icon { filter: invert(1); opacity: 0.9; }
+
+        /* Cards — apply both container and container-fluid */
+        .container .card, .container-fluid .card {
+            background: var(--fc-glass-bg) !important;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--fc-glass-border) !important;
+            border-radius: var(--fc-radius);
+            box-shadow: var(--fc-glass-shadow), inset 0 1px 0 rgba(255,255,255,0.04);
+            transition: border-color var(--fc-transition), box-shadow var(--fc-transition);
+        }
+
+        .container .card:hover, .container-fluid .card:hover {
+            border-color: var(--fc-glass-border-glow) !important;
+            box-shadow: var(--fc-glass-shadow), 0 0 24px rgba(0,0,0,0.35);
+        }
+
+        .card-body {
+            padding: var(--fc-space-lg);
+            color: var(--fc-text-secondary);
+        }
+
+        /* Profile grid — left column fixed width, right expands */
+        #view-profile .row.g-4 {
+            display: grid;
+            grid-template-columns: 440px minmax(0, 1fr);
+            gap: var(--fc-space-lg);
+            align-items: stretch;
+            min-height: 520px;
+            width: 100%;
+        }
+
+        /* Mobile: stack */
+        @media (max-width: 991.98px) {
+            #view-profile .row.g-4 {
+                grid-template-columns: 1fr;
+                min-height: 0;
+            }
+        }
+
+        /* Keep card layout flexible */
+        #view-profile .row.g-4 .col-lg-6 {
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #view-profile .row.g-4 .card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        #view-profile .row.g-4 .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        /* Upload area */
+        #form-upload .form-label {
+            font-weight: 600;
+            letter-spacing: var(--fc-tracking);
+            color: var(--fc-text-secondary);
+        }
+
+        #upload-file {
+            min-height: 140px;
+            padding: var(--fc-space-lg) !important;
+            background: var(--fc-drop-bg) !important;
+            border: 2px dashed var(--fc-drop-border) !important;
+            border-radius: var(--fc-radius);
+            color: var(--fc-text-muted);
+            font-size: 0.9rem;
+            transition: border-color var(--fc-transition), background var(--fc-transition), box-shadow var(--fc-transition);
+        }
+
+        #upload-file:hover {
+            border-color: var(--fc-pink) !important;
+            background: var(--fc-drop-hover) !important;
+            box-shadow: 0 0 20px rgba(233, 30, 99, 0.12);
+        }
+
+        #upload-file:focus {
+            outline: none;
+            border-color: var(--fc-yellow) !important;
+            box-shadow: 0 0 0 3px var(--fc-yellow-glow);
+        }
+
+        #upload-file::file-selector-button {
+            padding: 0.5rem 1rem;
+            margin-right: 0.75rem;
+            background: var(--fc-pink);
+            color: #fff;
+            border: none;
+            border-radius: var(--fc-radius-sm);
+            font-weight: 600;
+            letter-spacing: var(--fc-tracking);
+            transition: background var(--fc-transition), box-shadow var(--fc-transition);
+        }
+
+        #upload-file::file-selector-button:hover {
+            background: #d81b60;
+            box-shadow: 0 0 16px var(--fc-pink-glow);
+        }
+
+        #preview-container {
+            border-radius: var(--fc-radius);
+            overflow: hidden;
+            border: 1px solid var(--fc-glass-border);
+            background: rgba(0,0,0,0.3);
+        }
+
+        #preview-img { max-height: 260px; object-fit: contain; display: block; }
+        .img-thumbnail { border: none !important; background: transparent !important; }
+
+        /* Result card */
+        #result-column .card-body { padding: var(--fc-space-lg); }
+
+        #upload-result {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            background: var(--fc-report-bg);
+            border-left: 4px solid var(--fc-report-border);
+            border-radius: 0 var(--fc-radius-sm) var(--fc-radius-sm) 0;
+            padding: var(--fc-space-lg);
+            font-family: var(--fc-font);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.2);
+        }
+
+        /* Typewriter-style body text */
+        #upload-result .result-assessment {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: var(--fc-text-primary);
+            font-size: 0.98rem;
+            line-height: 1.8;
+            letter-spacing: 0.01em;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 0.5rem; /* space for scrollbar */
+        }
+
+        /* Price tag */
+        #upload-result .result-cost {
+            flex-shrink: 0;
+            margin-top: auto;
+            padding-top: var(--fc-space);
+
+            font-weight: 700;
+            font-size: 1.5rem;
+
+            color: var(--fc-green);
+            text-shadow: 0 0 20px var(--fc-green-glow);
+            box-shadow: 0 -2px 12px rgba(233, 30, 99, 0.15);
+        }
+
+        #upload-result .result-cost.text-muted { color: var(--fc-text-muted) !important; text-shadow: none; box-shadow: none; }
+
+        /* Scrollbar styling inside result */
+        #upload-result .result-assessment::-webkit-scrollbar { width: 8px; }
+        #upload-result .result-assessment::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        #upload-result .result-assessment::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.12);
+            border-radius: 4px;
+        }
+        #upload-result .result-assessment::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+        #upload-result .result-assessment { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.25) transparent; }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--fc-pink) !important;
+            border: none !important;
+            color: #fff !important;
+            font-weight: 600;
+            letter-spacing: var(--fc-tracking);
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--fc-radius-sm);
+            transition: background var(--fc-transition), transform var(--fc-transition), box-shadow var(--fc-transition);
+            box-shadow: 0 2px 12px var(--fc-pink-glow);
+        }
+
+        .btn-primary:hover {
+            background: #d81b60 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 24px var(--fc-pink-glow), 0 0 32px rgba(233, 30, 99, 0.25);
+        }
+
+        .btn-primary:active { transform: translateY(0); }
+
+        /* Form controls */
+        .form-control {
+            background: rgb(0, 0, 0) !important;
+            border: 1px solid var(--fc-glass-border) !important;
+            color: var(--fc-text-primary) !important;
+            border-radius: var(--fc-radius-sm);
+            padding: 0.6rem 0.85rem;
+            transition: border-color var(--fc-transition), box-shadow var(--fc-transition);
+        }
+
+        .form-control::placeholder { color: var(--fc-text-muted); }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--fc-yellow) !important;
+            box-shadow: 0 0 0 3px var(--fc-yellow-glow);
+        }
+
+        /* Auth views */
+        #view-login, #view-register {
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .view .h4, .view .h5 { color: var(--fc-text-primary); font-weight: 600; letter-spacing: var(--fc-tracking); }
+        #profile-username.text-primary { color: var(--fc-yellow) !important; }
+        #login-message, #register-message, #upload-message { min-height: 1.5em; font-size: 0.875rem; }
+        .text-danger { color: #f87171 !important; }
+        #register-message.text-success { color: var(--fc-green) !important; }
+
+        /* History section */
+        #view-profile .row.mt-5 .card { padding: var(--fc-space-lg); }
+        #view-profile .row.mt-5 .h5 { color: var(--fc-text-primary); }
+        .history-card {
+            background: var(--fc-glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--fc-glass-border);
+            border-radius: var(--fc-radius-sm);
+            padding: var(--fc-space);
+            transition: border-color var(--fc-transition);
+        }
+        .history-card:hover { border-color: var(--fc-glass-border-glow); }
+        .history-card .result-cost { color: var(--fc-green); font-weight: 600; }
+
+        /* Overlay — loading */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(12, 12, 15, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay .spinner-border { color: var(--fc-pink) !important; }
+        #overlay-text { color: var(--fc-text-secondary); margin-top: var(--fc-space); }
+
+        /* Responsive tweaks */
+        @media (max-width: 575.98px) {
+            .card-body { padding: var(--fc-space); }
+            #upload-file { min-height: 110px; }
+        }
+
+        #result-column {
+            padding-right: 0 !important;
+        }
+    </style>
 </head>
 <body>
-<!-- Top navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="#">AutoClaim</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -26,88 +383,84 @@
     </div>
 </nav>
 
-<main class="container py-4">
-    <!-- Auth / Landing views -->
-    <div id="view-login" class="view card shadow-sm rounded-3 mx-auto" style="max-width: 420px;">
-        <div class="card-body p-4">
-            <h2 class="card-title h4 mb-4">Daxil ol</h2>
-            <form id="form-login">
-                <div class="mb-3">
-                    <label for="login-username" class="form-label">İstifadəçi adı</label>
-                    <input type="text" id="login-username" class="form-control" required autocomplete="username">
-                </div>
-                <div class="mb-3">
-                    <label for="login-password" class="form-label">Şifrə</label>
-                    <input type="password" id="login-password" class="form-control" required autocomplete="current-password">
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Daxil ol</button>
-            </form>
-            <p id="login-message" class="mt-3 mb-0 text-danger small"></p>
-        </div>
+<main class="container-fluid px-4 px-lg-5 py-5">
+    <div id="view-login" class="view card mx-auto p-4" style="max-width: 420px;">
+        <h2 class="h4 mb-4">Daxil ol</h2>
+        <form id="form-login">
+            <div class="mb-3">
+                <label class="form-label">İstifadəçi adı</label>
+                <input type="text" id="login-username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Şifrə</label>
+                <input type="password" id="login-password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Daxil ol</button>
+        </form>
+        <p id="login-message" class="mt-3 text-danger small"></p>
     </div>
 
-    <div id="view-register" class="view card shadow-sm rounded-3 mx-auto d-none" style="max-width: 420px;">
-        <div class="card-body p-4">
-            <h2 class="card-title h4 mb-4">Qeydiyyat</h2>
-            <form id="form-register">
-                <div class="mb-3">
-                    <label for="reg-username" class="form-label">İstifadəçi adı</label>
-                    <input type="text" id="reg-username" class="form-control" required autocomplete="username">
-                </div>
-                <div class="mb-3">
-                    <label for="reg-fullName" class="form-label">Ad Soyad</label>
-                    <input type="text" id="reg-fullName" class="form-control" required autocomplete="name">
-                </div>
-                <div class="mb-3">
-                    <label for="reg-password" class="form-label">Şifrə</label>
-                    <input type="password" id="reg-password" class="form-control" required autocomplete="new-password">
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Qeydiyyatdan keç</button>
-            </form>
-            <p id="register-message" class="mt-3 mb-0 text-success small"></p>
-        </div>
+    <div id="view-register" class="view card mx-auto p-4 d-none" style="max-width: 420px;">
+        <h2 class="h4 mb-4">Qeydiyyat</h2>
+        <form id="form-register">
+            <div class="mb-3">
+                <label class="form-label">İstifadəçi adı</label>
+                <input type="text" id="reg-username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Ad Soyad</label>
+                <input type="text" id="reg-fullName" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Şifrə</label>
+                <input type="password" id="reg-password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Qeydiyyat</button>
+        </form>
+        <p id="register-message" class="mt-3 text-success small"></p>
     </div>
 
-    <!-- Profile view: upload + results + history -->
     <div id="view-profile" class="view d-none">
-        <div class="row">
-            <div class="col-lg-6 mb-4">
-                <div class="card shadow-sm rounded-3 h-100">
+        <div class="row g-4">
+            <div class="col-lg-6" style="width:440px; flex:0 0 440px;">
+                <div class="card h-100">
                     <div class="card-body">
-                        <h3 class="h5 mb-3">Xoş gəldin, <span id="profile-username"></span></h3>
+                        <h3 class="h5 mb-4">Xoş gəldin, <span id="profile-username" class="text-primary"></span></h3>
                         <form id="form-upload">
-                            <div class="mb-3">
-                                <label for="upload-file" class="form-label">Zədə şəklini seçin (şəkil, max 1.5 MB)</label>
+                            <div class="mb-4">
+                                <label class="form-label">Zədə şəklini seçin</label>
                                 <input type="file" id="upload-file" class="form-control" accept="image/*" required>
                             </div>
-                            <div class="mb-3" id="preview-container" style="display: none;">
+                            <div class="mb-4" id="preview-container" style="display: none;">
                                 <img id="preview-img" src="" alt="Önizləmə" class="img-thumbnail rounded">
                             </div>
-                            <button type="submit" class="btn btn-primary" id="btn-upload">Yüklə və analiz et</button>
+                            <button type="submit" class="btn btn-primary px-4 py-2" id="btn-upload">Yüklə və analiz et</button>
                         </form>
-                        <p id="upload-message" class="mt-3 mb-0 small"></p>
+                        <p id="upload-message" class="mt-3 small"></p>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 mb-4">
-                <div class="card shadow-sm rounded-3 h-100">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Son nəticə</h3>
-                        <div id="upload-result" class="text-muted small">Şəkil yükləndikdən sonra AI qiymətləndirməsi və təxmini məbləğ burada göstəriləcək.</div>
+
+            <div class="col-lg-6" id="result-column" style="flex:1; width:100%; max-width:100%;">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="h5 mb-4">Son nəticə</h3>
+                        <div id="upload-result" class="text-muted d-flex flex-column">
+                            <div class="result-assessment">Şəkil yükləndikdən sonra AI qiymətləndirməsi burada göstəriləcək.</div>
+                            <div class="result-cost">   Təxmini məbləğ: -- AZN
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
+
+        <!-- Tarixçə -->
+        <div class="row mt-5">
             <div class="col-12">
-                <div class="card shadow-sm rounded-3">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Tarixçə</h3>
-                        <div id="history-container">
-                            <div id="history-loading" class="text-muted small d-none">Yüklənir...</div>
-                            <div id="history-empty" class="text-muted small d-none">Tarixçə tapılmadı</div>
-                            <div id="history-list" class="row g-3"></div>
-                        </div>
+                <div class="card p-4">
+                    <h3 class="h5 mb-4">Tarixçə</h3>
+                    <div id="history-list" class="row g-3">
                     </div>
                 </div>
             </div>
@@ -115,15 +468,11 @@
     </div>
 </main>
 
-<!-- Global loading overlay -->
-<div id="overlay" class="overlay d-none" aria-hidden="true">
-    <div class="spinner-border text-light" role="status">
-        <span class="visually-hidden">Yüklənir...</span>
-    </div>
-    <p id="overlay-text" class="mt-2 text-white small">Yüklənir...</p>
+<div id="overlay" class="overlay d-none">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p id="overlay-text" class="mt-3 text-white">AI şəkli analiz edir, zəhmət olmasa gözləyin...</p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="script.js"></script>
 </body>
 </html>
