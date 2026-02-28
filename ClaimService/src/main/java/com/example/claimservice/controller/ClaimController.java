@@ -24,10 +24,13 @@ public class ClaimController {
         // 1. AI-dən analiz və təxmini qiyməti alırıq
         String aiResult = aiService.analyzeDamageAndPrice(file);
 
+        Double estimatedPrice = aiService.parsePrice(aiResult);
+
         // 2. Yeni Claim obyekti yaradırıq
         Claim claim = new Claim();
         claim.setUsername(username);
         claim.setAiAssessment(aiResult);
+        claim.setEstimatedCost(estimatedPrice);
         claim.setImageUrl("uploads/" + file.getOriginalFilename());
 
         // 3. Bazaya yadda saxlayırıq
