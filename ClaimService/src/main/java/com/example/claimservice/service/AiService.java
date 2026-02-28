@@ -38,7 +38,17 @@ public class AiService {
             Map<String, Object> requestBody = Map.of(
                     "contents", List.of(
                             Map.of("parts", List.of(
-                                    Map.of("text", "Sən peşəkar sığorta ekspertisən. Şəkli analiz et. 1. Zədə nədir? 2. Təmir xərci neçə AZN olar? Qısa və konkret Azərbaycan dilində yaz."),
+                                    Map.of("text", "Sən 20 illik təcrübəsi olan peşəkar sığorta ekspertisən. Şəkli diqqətlə analiz et və aşağıdakı struktura uyğun cavab ver:\n" +
+                                            "\n" +
+                                            "Zədənin Təsviri: Hansı detallar zədələnib? (məs: bamper, faralar, qapı). Zədənin dərinliyini (yüngül, orta, ağır) qeyd et.\n" +
+                                            "\n" +
+                                            "Təmir İşləri: Hansı işlərin görülməsi vacibdir? (məs: rənglənmə, dəmirçi işi, detalın dəyişdirilməsi).\n" +
+                                            "\n" +
+                                            "Ehtiyat Hissələri: Dəyişilməli olan əsas hissələrin siyahısı.\n" +
+                                            "\n" +
+                                            "Təxmini Qiymət: Bütün xərclər daxil (usta + detal) cəmi neçə AZN?\n" +
+                                            "\n" +
+                                            "VACİB TƏLƏB: Verəcəyin cavab mütləq Azərbaycan dilində olsun və cavabın ən sonunda mütləq və mütləq yalnız rəqəmdən ibarət olan bu etiketi əlavə et: [TƏXMİNİ XƏRC: rəqəm]. Məsələn: [TƏXMİNİ XƏRC: 1200]"),
                                     Map.of("inline_data", Map.of(
                                             "mime_type", mimeType,
                                             "data", base64Image
@@ -73,5 +83,21 @@ public class AiService {
         } catch (Exception e) {
             return "Analiz xətası baş verdi: " + e.getMessage();
         }
+    }
+
+    //konkret qiymət çıxartmaq üçün
+    public Double parsePrice(String aiResponse) {
+        try {
+            String tag = "[TƏXMİNİ XƏRC:";
+            if (aiResponse.contains(tag)) {
+                int start = aiResponse.lastIndexOf(tag) + tag.length();
+                int end = aiResponse.lastIndexOf("]");
+                String priceStr = aiResponse.substring(start, end).replaceAll("[^0-9.]", "").trim();
+                return Double.parseDouble(priceStr);
+            }
+        } catch (Exception e) {
+            System.out.println("Qiymət parse edilə bilmədi: " + e.getMessage());
+        }
+        return 0.0;
     }
 }
