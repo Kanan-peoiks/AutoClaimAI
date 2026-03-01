@@ -1,4 +1,4 @@
-# AutoClaimAI System
+# AutoClaimAI System 👾
 
 ## 🚀 Overview:
 Processing insurance claims (e.g., after a car accident) can be time-consuming and error-prone. AutoClaimAI automates this process: the user uploads a photo of the damaged vehicle, and an AI service (using Google Gemini) analyzes the damage. The AI identifies damaged parts and needed repairs, and provides an estimated total cost. For example, Gemini models support multimodal input, allowing them to analyze images and extract detailed information.
