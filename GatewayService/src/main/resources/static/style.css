@@ -1,0 +1,83 @@
+:root {
+    --fc-obsidian: #0c0c0f;
+    --fc-slate: #1a1a24;
+    --fc-midnight: #0f1419;
+    --fc-midnight-blue: #0f172a;
+    --fc-bg-body: linear-gradient(160deg, var(--fc-obsidian) 0%, var(--fc-slate) 35%, var(--fc-midnight) 60%, var(--fc-midnight-blue) 100%);
+    --fc-glass-bg: rgba(15, 15, 20, 0.65);
+    --fc-glass-border: #ffffff;
+    --fc-pink: #e91e63;
+    --fc-yellow: #facc15;
+    --fc-text-primary: #f1f5f9;
+    --fc-radius: 10px;
+    --fc-font: 'Inter', 'Montserrat', system-ui, sans-serif;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--fc-font);
+    color: var(--fc-text-primary);
+    background: var(--fc-bg-body);
+    background-attachment: fixed;
+}
+
+/* Navbar */
+.navbar {
+    background: var(--fc-glass-bg) !important;
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--fc-glass-border);
+}
+
+/* Cards */
+.card {
+    background: var(--fc-glass-bg) !important;
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--fc-glass-border) !important;
+    border-radius: var(--fc-radius);
+    color: var(--fc-text-primary);
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--fc-pink) !important;
+    border: none !important;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: #d81b60 !important;
+}
+
+/* Form */
+.form-control {
+    background: #000 !important;
+    border: 1px solid var(--fc-glass-border) !important;
+    color: var(--fc-text-primary) !important;
+}
+
+/* Result */
+#upload-result {
+    background: rgba(10, 10, 14, 0.85);
+    border-left: 4px solid var(--fc-pink);
+    padding: 1.5rem;
+}
+
+.result-cost {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--fc-pink);
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 12, 15, 0.85);
+    backdrop-filter: blur(12px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
